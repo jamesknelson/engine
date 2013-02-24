@@ -9,6 +9,8 @@ module Locomotive
     # If the page corresponds to a redirect, then a 301 redirection is made.
     #
     def render_locomotive_page
+      console.log Locomotive.mounted_on
+
       if request.fullpath =~ /^\/#{Locomotive.mounted_on}\//
         render :template => '/locomotive/errors/404', :layout => '/locomotive/layouts/not_logged_in', :status => :not_found
       else
