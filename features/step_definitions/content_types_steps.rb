@@ -10,7 +10,7 @@ def set_custom_fields_from_table(content_type, fields)
       target_name   = field.delete('target')
       target_model  = @site.content_types.where(:name => target_name).first
 
-      field['class_name'] = target_model.klass_with_custom_fields(:entries).to_s
+      field['class_name'] = target_model.entries_class_name
     end
 
     content_type.entries_custom_fields.build field
@@ -72,4 +72,19 @@ end
 
 Then %r{^I should not see (\d+) times the "([^"]*)" field$} do |n, field|
   page.all(:css, "#content_#{field.underscore.downcase}_input").size.should_not == n.to_i
+end
+
+When %r{^I unselect the notified accounts$} do
+  page.evaluate_script "window.application_view.view.model.set({ 'public_submission_accounts': null });"
+
+  click_button 'Save'
+
+  wait_until do
+    page.find('.notice').visible?
+  end
+end
+
+Then %r{^there should not be any notified accounts on the "([^"]*)" model$} do |name|
+  content_type = Locomotive::ContentType.where(:name => name).first
+  content_type.reload.public_submission_accounts.should eq([])
 end

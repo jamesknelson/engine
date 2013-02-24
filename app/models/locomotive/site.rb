@@ -19,6 +19,7 @@ module Locomotive
     references_many :theme_assets,    :class_name => 'Locomotive::ThemeAsset',    :dependent => :destroy, :validate => false
     references_many :content_assets,  :class_name => 'Locomotive::ContentAsset',  :dependent => :destroy, :validate => false
     references_many :content_types,   :class_name => 'Locomotive::ContentType',   :dependent => :destroy, :validate => false
+    references_many :translations,    :class_name => 'Locomotive::Translation',   :dependent => :destroy, :validate => false
     embeds_many     :memberships,     :class_name => 'Locomotive::Membership'
 
     ## validations ##
@@ -48,18 +49,6 @@ module Locomotive
 
     def admin_memberships
       self.memberships.find_all { |m| m.admin? }
-    end
-
-    def to_liquid
-      Locomotive::Liquid::Drops::Site.new(self)
-    end
-
-    def to_presenter(options = {})
-      Locomotive::SitePresenter.new(self, options)
-    end
-
-    def as_json(options = {})
-      self.to_presenter(options).as_json
     end
 
     protected
